@@ -1,0 +1,23 @@
+# Dependencias
+node_modules/
+
+# Configuración con credenciales (NO subir a Git)
+config.js
+.env
+.env.local
+
+# Archivos de entorno y secretos
+*.key
+*.pem
+
+# Cachés y logs
+*.log
+.DS_Store
+Thumbs.db
+
+# Artefactos de pruebas (Playwright MCP)
+.playwright-mcp/
+
+# Salidas de build
+dist/
+build/

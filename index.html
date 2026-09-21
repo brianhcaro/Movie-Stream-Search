@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Busca películas y descubre en qué plataformas de streaming están disponibles en tu país">
+    <title>StreamFinder - Dónde ver tus películas</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            500: '#7c3aed',
+                            600: '#6d28d9',
+                            700: '#5b21b6'
+                        },
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen bg-dark-950 text-dark-50 font-sans antialiased">
+    <!-- Indicador de carga global -->
+    <div id="global-loader" class="fixed inset-0 bg-dark-950/90 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="flex flex-col items-center gap-4">
+            <div class="w-12 h-12 border-4 border-primary-500/30 border-t-primary-500 rounded-full animate-spin"></div>
+            <p class="text-dark-300 text-lg" id="loader-text">Cargando...</p>
+        </div>
+    </div>
+
+    <main class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="relative py-6 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="inline-flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/25">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-white to-primary-300 bg-clip-text text-transparent">
+                        StreamFinder
+                    </h1>
+                </div>
+                <p class="text-dark-400 text-sm sm:text-base max-w-md mx-auto">
+                    Busca cualquier película y descubre al instante en qué plataformas de streaming está disponible en tu país
+                </p>
+            </div>
+        </header>
+
+        <!-- Buscador principal -->
+        <section class="flex-1 flex items-start justify-center pt-4 sm:pt-8 px-4 sm:px-6 lg:px-8 pb-12">
+            <div class="w-full max-w-3xl">
+                <form id="search-form" class="space-y-4" novalidate>
+                    <div class="relative">
+                        <label for="movie-search" class="sr-only">Buscar película</label>
+                        <div class="relative">
+                            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input
+                                type="search"
+                                id="movie-search"
+                                name="movie-search"
+                                placeholder="Escribe el título de una película..."
+                                autocomplete="off"
+                                spellcheck="false"
+                                class="w-full px-12 py-4 text-lg bg-dark-900/80 backdrop-blur-md border border-dark-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-transparent transition-all duration-200 placeholder-dark-500 text-dark-50"
+                                required
+                                minlength="2"
+                                maxlength="100"
+                            >
+                            <button
+                                type="button"
+                                id="clear-search"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-dark-400 hover:text-white hover:bg-dark-700 transition-colors hidden"
+                                aria-label="Limpiar búsqueda"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <button
+                                type="submit"
+                                id="search-btn"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 focus:ring-offset-dark-950"
+                                aria-label="Buscar película"
+                            >
+                                Buscar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Indicador de país detectado -->
+                    <div id="country-indicator" class="flex items-center justify-center gap-2 text-sm text-dark-400 hidden">
+                        <span class="flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span id="country-code" class="font-mono font-medium text-primary-400">--</span>
+                        </span>
+                        <span class="text-dark-500">•</span>
+                        <span id="country-name" class="font-medium">Detectando ubicación...</span>
+                    </div>
+                </form>
+
+                <!-- Mensajes de estado -->
+                <div id="status-message" class="hidden text-center py-8" role="status" aria-live="polite">
+                    <div class="flex flex-col items-center gap-3">
+                        <div id="status-icon" class="w-12 h-12 rounded-full flex items-center justify-center"></div>
+                        <p id="status-text" class="text-dark-300 text-lg"></p>
+                        <p id="status-subtext" class="text-dark-500 text-sm max-w-md"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resultados -->
+        <section id="results-section" class="px-4 sm:px-6 lg:px-8 pb-12 hidden" aria-labelledby="results-title">
+            <div class="max-w-4xl mx-auto">
+                <h2 id="results-title" class="sr-only">Resultados de la búsqueda</h2>
+                <div id="results-container" class="space-y-6"></div>
+                
+                <!-- Paginación (para búsquedas múltiples) -->
+                <div id="pagination" class="flex items-center justify-center gap-2 mt-8 hidden" role="navigation" aria-label="Paginación de resultados">
+                    <button id="prev-page" class="px-4 py-2 bg-dark-800 hover:bg-dark-700 text-dark-300 rounded-xl text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled aria-label="Página anterior">
+                        Anterior
+                    </button>
+                    <span id="page-info" class="text-dark-400 text-sm"></span>
+                    <button id="next-page" class="px-4 py-2 bg-dark-800 hover:bg-dark-700 text-dark-300 rounded-xl text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled aria-label="Página siguiente">
+                        Siguiente
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-dark-800 py-6 px-4">
+        <div class="max-w-4xl mx-auto text-center text-dark-500 text-sm">
+            <p>Datos de películas proporcionados por <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer" class="text-primary-400 hover:text-primary-300 transition-colors">TMDB</a></p>
+            <p class="mt-1">Tu ubicación se detecta localmente en el navegador — no se almacenan datos personales</p>
+        </div>
+    </footer>
+
+    <!-- Script principal -->
+    <script src="app.js" type="module"></script>
+</body>
+</html>
